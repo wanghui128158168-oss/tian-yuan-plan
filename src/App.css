@@ -8880,3 +8880,192 @@ input:focus, textarea:focus {
   align-items: center;
   justify-content: center;
 }
+
+/* ===== 成长 tab 子页切换 ===== */
+.growth-subtabs {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px 0;
+  background: var(--bg, #fff);
+  border-bottom: 1px solid #F2F2F7;
+}
+.growth-subtab {
+  flex: 1;
+  padding: 9px 0;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: #86868B;
+  border-radius: 0;
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  transition: all 0.2s;
+}
+.growth-subtab.active {
+  color: #1B7A3D;
+  border-bottom-color: #1B7A3D;
+}
+
+/* ===== 矿洞主视图 ===== */
+.mine-view {
+  padding: 16px 20px 100px;
+  background: #F2F2F7;
+  min-height: 70vh;
+}
+
+/* ===== 货币钱包 ===== */
+.mine-wallet {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.wallet-item {
+  flex: 1;
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 8px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.wallet-icon { display: block; font-size: 22px; margin-bottom: 4px; }
+.wallet-num { display: block; font-size: 20px; font-weight: 700; color: #1D1D1F; }
+.wallet-label { display: block; font-size: 11px; color: #86868B; margin-top: 2px; }
+
+/* ===== 切石头区域 ===== */
+.cut-zone {
+  background: #1A1A2E;
+  border-radius: 20px;
+  padding: 28px 20px 24px;
+  text-align: center;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(26,26,46,0.2);
+}
+.cut-ore-display {
+  font-size: 64px;
+  margin-bottom: 12px;
+  animation: oreFloat 3s ease-in-out infinite;
+}
+@keyframes oreFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.cut-cost-hint {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 4px;
+}
+.cut-prob-hint {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 20px;
+}
+.cut-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #2ECC71, #1B7A3D);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(46,204,113,0.35);
+  transition: transform 0.15s, opacity 0.15s;
+}
+.cut-btn:active { transform: scale(0.97); }
+.cut-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* ===== 宝石卡片网格 ===== */
+.mine-section { margin-bottom: 20px; }
+.mine-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1D1D1F;
+  margin: 0 0 10px;
+}
+.gem-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.gem-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 6px;
+  text-align: center;
+  border: 1.5px solid var(--gem-color, #E5E5EA);
+  box-shadow: 0 0 0 0 var(--gem-color, transparent);
+  transition: transform 0.15s;
+}
+.gem-card:active { transform: scale(0.95); }
+.gem-emoji { display: block; font-size: 28px; margin-bottom: 4px; }
+.gem-name { display: block; font-size: 10px; color: #3A3A3C; font-weight: 500; }
+.gem-rarity-label {
+  display: block;
+  font-size: 9px;
+  color: var(--gem-color, #86868B);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ===== 空状态 ===== */
+.mine-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #86868B;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ===== 宝石揭示弹窗 ===== */
+.gem-reveal-modal {
+  background: #fff;
+  border-radius: 24px;
+  padding: 40px 32px;
+  width: min(300px, 85vw);
+  text-align: center;
+  animation: gemPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes gemPop {
+  0% { transform: scale(0.3) rotate(-8deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.gem-reveal-emoji { font-size: 80px; margin-bottom: 12px; }
+.gem-reveal-name { font-size: 24px; font-weight: 700; color: #1D1D1F; }
+.gem-reveal-rarity { font-size: 16px; font-weight: 700; margin-top: 6px; }
+.gem-reveal-btn {
+  margin-top: 24px;
+  width: 100%;
+  padding: 14px;
+  background: #1B7A3D;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===== 切割动画 ===== */
+.cutting-overlay { text-align: center; }
+.cutting-rock {
+  font-size: 72px;
+  animation: rockShake 0.25s infinite;
+  display: block;
+}
+.cutting-hammer {
+  font-size: 40px;
+  margin-top: -12px;
+  animation: hammerStrike 0.5s infinite;
+  display: block;
+}
+@keyframes rockShake {
+  0%, 100% { transform: rotate(-4deg) scale(1); }
+  50% { transform: rotate(4deg) scale(1.05); }
+}
+@keyframes hammerStrike {
+  0% { transform: rotate(-30deg) translateY(-10px); }
+  50% { transform: rotate(10deg) translateY(5px); }
+  100% { transform: rotate(-30deg) translateY(-10px); }
+}

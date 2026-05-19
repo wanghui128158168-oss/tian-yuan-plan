@@ -1,4 +1,5 @@
-import { PLANT_ACHIEVEMENTS } from '../constants'
+import { useState } from 'react'
+import { PLANT_ACHIEVEMENTS, GEM_DATA, RARITY_CONFIG, CUT_COST_POINTS, CUT_COST_ORE } from '../constants'
 import { CheckCircle2, Flame, Target } from 'lucide-react'
 import { COACH_STYLES, loadCoachStyle } from '../utils/confetti'
 import { loadPlantCollection } from '../utils/storage'
@@ -8,10 +9,54 @@ function GrowthView({
   goals, todayStr, globalLevel, globalExp, showToast,
   dailyReviewText, setDailyReviewText, handleSaveDailyReview,
   aiComment, handleAIReview, isAIReviewing,
-  showRules, setShowRules, setShowShareModal
+  showRules, setShowRules, setShowShareModal,
+  ore, setOre, minePoints, setMinePoints, gems, setGems, currentUser
 }) {
+  const [growthTab, setGrowthTab] = useState('garden')
+  const [cutting, setCutting] = useState(false)
+  const [revealGem, setRevealGem] = useState(null)
+
+  const rollGem = () => {
+    const rand = Math.random()
+    let cumulative = 0
+    for (const [rarity, config] of Object.entries(RARITY_CONFIG)) {
+      cumulative += config.prob
+      if (rand <= cumulative) {
+        const pool = GEM_DATA[rarity]
+        return { ...pool[Math.floor(Math.random() * pool.length)], id: `gem_${Date.now()}`, cutAt: new Date().toISOString() }
+      }
+    }
+    return { ...GEM_DATA.common[0], id: `gem_${Date.now()}`, cutAt: new Date().toISOString() }
+  }
+
+  const handleCut = () => {
+    if (ore < CUT_COST_ORE) return showToast('原石不足，完成更多步骤吧', 'error')
+    if (minePoints < CUT_COST_POINTS) return showToast(`积分不足 ${CUT_COST_POINTS}，继续加油`, 'error')
+    setCutting(true)
+    setOre(prev => { const v = prev - CUT_COST_ORE; localStorage.setItem('mine_ore', String(v)); return v })
+    setMinePoints(prev => { const v = prev - CUT_COST_POINTS; localStorage.setItem('mine_points', String(v)); return v })
+    setTimeout(() => {
+      const gem = rollGem()
+      setGems(prev => { const v = [gem, ...prev]; localStorage.setItem('mine_gems', JSON.stringify(v)); return v })
+      setRevealGem(gem)
+      setCutting(false)
+      if (currentUser) {
+        import('../utils/supabase').then(({ upsertGem }) => {
+          upsertGem && upsertGem(gem, currentUser.id).catch(console.error)
+        })
+      }
+    }, 1600)
+  }
+
   return (
-    <div className="section growth-section">
+    <div className="growth-view">
+      <div className="growth-subtabs">
+        <button className={`growth-subtab ${growthTab === 'garden' ? 'active' : ''}`} onClick={() => setGrowthTab('garden')}>🌿 田园</button>
+        <button className={`growth-subtab ${growthTab === 'mine' ? 'active' : ''}`} onClick={() => setGrowthTab('mine')}>⛏️ 矿洞</button>
+      </div>
+
+      {growthTab === 'garden' && (
+      <div className="section growth-section">
       {(() => {
         const myCollection = loadPlantCollection()
         const completedStepsCount = goals.flatMap(g => g.steps||[]).filter(s => s.completed).length
@@ -169,6 +214,74 @@ function GrowthView({
           )
         })()}
       </div>
+      </div>
+      )}
+
+      {growthTab === 'mine' && (
+      <div className="mine-view">
+        <div className="mine-wallet">
+          <div className="wallet-item"><span className="wallet-icon">⛏️</span><span className="wallet-num">{ore}</span><span className="wallet-label">原石</span></div>
+          <div className="wallet-item"><span className="wallet-icon">✨</span><span className="wallet-num">{minePoints}</span><span className="wallet-label">积分</span></div>
+          <div className="wallet-item"><span className="wallet-icon">💎</span><span className="wallet-num">{gems.length}</span><span className="wallet-label">宝石</span></div>
+        </div>
+
+        <div className="cut-zone">
+          <div className="cut-ore-display">🪨</div>
+          <div className="cut-cost-hint">消耗 {CUT_COST_ORE} 原石 + {CUT_COST_POINTS} 积分</div>
+          <div className="cut-prob-hint">普通55% · 精良28% · 稀有12% · 传说4% · 史诗1%</div>
+          <button className="cut-btn" onClick={handleCut} disabled={cutting || ore < 1 || minePoints < CUT_COST_POINTS}>
+            {cutting ? '切割中...' : '⛏️ 切开原石'}
+          </button>
+        </div>
+
+        {gems.length > 0 && (
+        <div className="mine-section">
+          <h3 className="mine-section-title">最近获得</h3>
+          <div className="gem-grid">
+            {gems.slice(0, 12).map(g => (
+              <div key={g.id} className="gem-card" style={{ '--gem-color': RARITY_CONFIG[g.rarity]?.color }}>
+                <span className="gem-emoji">{g.emoji}</span>
+                <span className="gem-name">{g.name}</span>
+                <span className="gem-rarity-label">{RARITY_CONFIG[g.rarity]?.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        )}
+
+        {gems.length === 0 && (
+        <div className="mine-empty">完成任务步骤获取原石和积分<br/>来切开你的第一块宝石 🪨</div>
+        )}
+      </div>
+      )}
+
+      {revealGem && (
+      <div className="confirm-overlay" onClick={() => setRevealGem(null)}>
+        <div className="gem-reveal-modal" onClick={e => e.stopPropagation()}>
+          <div className="gem-reveal-emoji">{revealGem.emoji}</div>
+          <div className="gem-reveal-name">{revealGem.name}</div>
+          <div className="gem-reveal-rarity" style={{ color: RARITY_CONFIG[revealGem.rarity]?.color }}>
+            {RARITY_CONFIG[revealGem.rarity]?.label}
+          </div>
+          <p style={{ color: '#86868B', fontSize: 13, margin: '8px 0 20px' }}>
+            {revealGem.rarity === 'epic' ? '🎉 史诗级！极为罕见！' :
+             revealGem.rarity === 'legend' ? '✨ 传说级！非常幸运！' :
+             revealGem.rarity === 'rare' ? '💫 稀有！继续加油' : '继续完成任务获得更多'}
+          </p>
+          <button className="gem-reveal-btn" onClick={() => setRevealGem(null)}>收下</button>
+        </div>
+      </div>
+      )}
+
+      {cutting && (
+      <div className="confirm-overlay">
+        <div className="cutting-overlay">
+          <div className="cutting-rock">🪨</div>
+          <div className="cutting-hammer">⛏️</div>
+          <p style={{ color: '#fff', fontSize: 14, marginTop: 12 }}>正在切割原石...</p>
+        </div>
+      </div>
+      )}
     </div>
   )
 }

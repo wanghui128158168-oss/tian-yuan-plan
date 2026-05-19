@@ -344,6 +344,9 @@ function App() {
   const [deferredPrompt, setDeferredPrompt] = useState(null)
   const [showInstallBanner, setShowInstallBanner] = useState(false)
   const [expFloat, setExpFloat] = useState(null)
+  const [ore, setOre] = useState(() => parseInt(localStorage.getItem('mine_ore') || '0'))
+  const [minePoints, setMinePoints] = useState(() => parseInt(localStorage.getItem('mine_points') || '0'))
+  const [gems, setGems] = useState(() => JSON.parse(localStorage.getItem('mine_gems') || '[]'))
 
   // 首次引导状态
   const [showInstallGuide, setShowInstallGuide] = useState(() => {
@@ -484,6 +487,11 @@ function App() {
       
       return newExp
     })
+  }
+
+  const addMineReward = (oreAmt = 1, pointsAmt = 10) => {
+    setOre(prev => { const v = prev + oreAmt; localStorage.setItem('mine_ore', String(v)); return v })
+    setMinePoints(prev => { const v = prev + pointsAmt; localStorage.setItem('mine_points', String(v)); return v })
   }
 
   // 检查提醒时间并触发通知
@@ -1450,6 +1458,7 @@ ${lowCheckinText}
               saveCreditedSteps(creditedSteps)
               addCappedStep()
               addExp(20)
+              addMineReward(1, 10)
               const currentCoach = loadCoachStyle()
               const coachMsgs = COACH_TOAST_MESSAGES[currentCoach] || COACH_TOAST_MESSAGES.gentle
               const coachMsg = coachMsgs[Math.floor(Math.random() * coachMsgs.length)]
@@ -1528,6 +1537,9 @@ ${lowCheckinText}
           return s.id === stepId ? { ...s, completed: !s.completed } : s
         })
         const allCompleted = newSteps.length > 0 && newSteps.every(s => s.completed)
+        if (allCompleted && !g.completed) {
+          addMineReward(3, 50)
+        }
         return {
           ...g,
           steps: newSteps,
@@ -1726,6 +1738,13 @@ ${lowCheckinText}
             showRules={showRules}
             setShowRules={setShowRules}
             setShowShareModal={setShowShareModal}
+            ore={ore}
+            setOre={setOre}
+            minePoints={minePoints}
+            setMinePoints={setMinePoints}
+            gems={gems}
+            setGems={setGems}
+            currentUser={currentUser}
           />
         )}
 

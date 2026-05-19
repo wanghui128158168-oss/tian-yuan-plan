@@ -55,3 +55,43 @@ export const quickStartOptions = [
   { icon:'🎯', label:'技能提升', desc:'编程/设计/外语', goals:['技能提升'], prompt:'我想系统学习提升一项新技能' },
   { icon:'📖', label:'读书写作', desc:'每月读书/写作输出', goals:['读书计划'], prompt:'我想养成每天读书和写作的习惯' },
 ]
+
+export const GEM_DATA = {
+  common: [
+    { name: '石英', emoji: '🤍', rarity: 'common' },
+    { name: '玛瑙', emoji: '🟤', rarity: 'common' },
+    { name: '虎眼石', emoji: '🟡', rarity: 'common' },
+    { name: '孔雀石', emoji: '💚', rarity: 'common' },
+  ],
+  fine: [
+    { name: '紫水晶', emoji: '🔮', rarity: 'fine' },
+    { name: '橄榄石', emoji: '💛', rarity: 'fine' },
+    { name: '月光石', emoji: '🌙', rarity: 'fine' },
+    { name: '海蓝宝', emoji: '🧊', rarity: 'fine' },
+  ],
+  rare: [
+    { name: '红宝石', emoji: '❤️', rarity: 'rare' },
+    { name: '蓝宝石', emoji: '💙', rarity: 'rare' },
+    { name: '翡翠', emoji: '💚', rarity: 'rare' },
+    { name: '碧玺', emoji: '💜', rarity: 'rare' },
+  ],
+  legend: [
+    { name: '祖母绿', emoji: '💎', rarity: 'legend' },
+    { name: '坦桑石', emoji: '🌀', rarity: 'legend' },
+  ],
+  epic: [
+    { name: '粉钻', emoji: '🌸', rarity: 'epic' },
+    { name: '亚历山大变石', emoji: '🌈', rarity: 'epic' },
+  ]
+}
+
+export const RARITY_CONFIG = {
+  common:  { label: '普通', color: '#9CA3AF', prob: 0.55 },
+  fine:    { label: '精良', color: '#8B5CF6', prob: 0.28 },
+  rare:    { label: '稀有', color: '#3B82F6', prob: 0.12 },
+  legend:  { label: '传说', color: '#F59E0B', prob: 0.04 },
+  epic:    { label: '史诗', color: '#EC4899', prob: 0.01 },
+}
+
+export const CUT_COST_POINTS = 30
+export const CUT_COST_ORE = 1
