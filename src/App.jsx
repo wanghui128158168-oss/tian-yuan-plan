@@ -1,4 +1,5 @@
 import { supabase, signIn, signUp, signOut, fetchGoals, upsertGoal, fetchUserStats, upsertUserStats, fetchPlantCollection, migrateLocalDataToSupabase } from './utils/supabase'
+import { playRewardDing } from './utils/sounds'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import './App.css'
 import { callAI } from './utils/ai'
@@ -492,6 +493,9 @@ function App() {
   const addMineReward = (oreAmt = 1, pointsAmt = 10) => {
     setOre(prev => { const v = prev + oreAmt; localStorage.setItem('mine_ore', String(v)); return v })
     setMinePoints(prev => { const v = prev + pointsAmt; localStorage.setItem('mine_points', String(v)); return v })
+    playRewardDing()
+    setExpFloat({ amount: `+${oreAmt}原石  +${pointsAmt}积分`, key: Date.now() })
+    setTimeout(() => setExpFloat(null), 1800)
   }
 
   // 检查提醒时间并触发通知

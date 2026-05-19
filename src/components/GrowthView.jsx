@@ -33,12 +33,14 @@ function GrowthView({
     if (ore < CUT_COST_ORE) return showToast('原石不足，完成更多步骤吧', 'error')
     if (minePoints < CUT_COST_POINTS) return showToast(`积分不足 ${CUT_COST_POINTS}，继续加油`, 'error')
     setCutting(true)
+    playHammerSound()
     setOre(prev => { const v = prev - CUT_COST_ORE; localStorage.setItem('mine_ore', String(v)); return v })
     setMinePoints(prev => { const v = prev - CUT_COST_POINTS; localStorage.setItem('mine_points', String(v)); return v })
     setTimeout(() => {
       const gem = rollGem()
       setGems(prev => { const v = [gem, ...prev]; localStorage.setItem('mine_gems', JSON.stringify(v)); return v })
       setRevealGem(gem)
+      ;['rare','legend','epic'].includes(gem.rarity) ? playRevealRare() : playRevealNormal()
       setCutting(false)
       if (currentUser) {
         import('../utils/supabase').then(({ upsertGem }) => {
@@ -258,16 +260,19 @@ function GrowthView({
       {revealGem && (
       <div className="confirm-overlay" onClick={() => setRevealGem(null)}>
         <div className="gem-reveal-modal" onClick={e => e.stopPropagation()}>
-          <div className="gem-reveal-emoji">{revealGem.emoji}</div>
-          <div className="gem-reveal-name">{revealGem.name}</div>
-          <div className="gem-reveal-rarity" style={{ color: RARITY_CONFIG[revealGem.rarity]?.color }}>
-            {RARITY_CONFIG[revealGem.rarity]?.label}
+          <div className={`gem-reveal-bg ${revealGem.rarity}`}>
+            <div className={`gem-reveal-glow ${revealGem.rarity}`} />
+            <div className="gem-reveal-emoji">{revealGem.emoji}</div>
+            <div className="gem-reveal-name">{revealGem.name}</div>
+            <div className="gem-reveal-rarity" style={{ color: RARITY_CONFIG[revealGem.rarity]?.color }}>
+              {RARITY_CONFIG[revealGem.rarity]?.label}
+            </div>
+            <p style={{ color: 'rgba(0,0,0,0.4)', fontSize: 13, margin: '8px 0 0', position: 'relative', zIndex: 1 }}>
+              {revealGem.rarity === 'epic' ? '✨ 史诗级！万里挑一！' :
+               revealGem.rarity === 'legend' ? '✨ 传说级！非常幸运！' :
+               revealGem.rarity === 'rare' ? '💫 稀有发现！' : ''}
+            </p>
           </div>
-          <p style={{ color: '#86868B', fontSize: 13, margin: '8px 0 20px' }}>
-            {revealGem.rarity === 'epic' ? '🎉 史诗级！极为罕见！' :
-             revealGem.rarity === 'legend' ? '✨ 传说级！非常幸运！' :
-             revealGem.rarity === 'rare' ? '💫 稀有！继续加油' : '继续完成任务获得更多'}
-          </p>
           <button className="gem-reveal-btn" onClick={() => setRevealGem(null)}>收下</button>
         </div>
       </div>
