@@ -18,34 +18,60 @@ function GrowthView({
 
   const rollGem = () => {
     const rand = Math.random()
+    const rarities = [
+      { key: 'epic', prob: 0.01 },
+      { key: 'legend', prob: 0.04 },
+      { key: 'rare', prob: 0.12 },
+      { key: 'fine', prob: 0.28 },
+      { key: 'common', prob: 0.55 },
+    ]
     let cumulative = 0
-    for (const [rarity, config] of Object.entries(RARITY_CONFIG)) {
-      cumulative += config.prob
-      if (rand <= cumulative) {
-        const pool = GEM_DATA[rarity]
-        return { ...pool[Math.floor(Math.random() * pool.length)], id: `gem_${Date.now()}`, cutAt: new Date().toISOString() }
+    for (const r of rarities) {
+      cumulative += r.prob
+      if (rand < cumulative) {
+        const pool = GEM_DATA[r.key]
+        const gem = pool[Math.floor(Math.random() * pool.length)]
+        return { ...gem, id: `gem_${Date.now()}`, cutAt: new Date().toISOString() }
       }
     }
-    return { ...GEM_DATA.common[0], id: `gem_${Date.now()}`, cutAt: new Date().toISOString() }
+    const fallback = GEM_DATA.common[0]
+    return { ...fallback, id: `gem_${Date.now()}`, cutAt: new Date().toISOString() }
   }
 
   const handleCut = () => {
-    if (ore < CUT_COST_ORE) return showToast('原石不足，完成更多步骤吧', 'error')
+    if (ore < CUT_COST_ORE) return showToast('原石不足，完成更多任务吧', 'error')
     if (minePoints < CUT_COST_POINTS) return showToast(`积分不足 ${CUT_COST_POINTS}，继续加油`, 'error')
+
     setCutting(true)
-    playHammerSound()
     setOre(prev => { const v = prev - CUT_COST_ORE; localStorage.setItem('mine_ore', String(v)); return v })
     setMinePoints(prev => { const v = prev - CUT_COST_POINTS; localStorage.setItem('mine_points', String(v)); return v })
+
+    try { playHammerSound() } catch(e) {}
+
     setTimeout(() => {
-      const gem = rollGem()
-      setGems(prev => { const v = [gem, ...prev]; localStorage.setItem('mine_gems', JSON.stringify(v)); return v })
-      setRevealGem(gem)
-      ;['rare','legend','epic'].includes(gem.rarity) ? playRevealRare() : playRevealNormal()
-      setCutting(false)
-      if (currentUser) {
-        import('../utils/supabase').then(({ upsertGem }) => {
-          upsertGem && upsertGem(gem, currentUser.id).catch(console.error)
-        })
+      try {
+        const gem = rollGem()
+        setGems(prev => { const v = [gem, ...prev]; localStorage.setItem('mine_gems', JSON.stringify(v)); return v })
+        setCutting(false)
+        setRevealGem(gem)
+
+        try {
+          if (['rare','legend','epic'].includes(gem.rarity)) {
+            playRevealRare()
+          } else {
+            playRevealNormal()
+          }
+        } catch(e) {}
+
+        if (currentUser) {
+          import('../utils/supabase').then(mod => {
+            if (mod.upsertGem) mod.upsertGem(gem, currentUser.id).catch(console.error)
+          }).catch(console.error)
+        }
+      } catch (err) {
+        console.error('切石头出错', err)
+        setCutting(false)
+        showToast('切割失败，请重试', 'error')
       }
     }, 1600)
   }

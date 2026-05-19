@@ -1,5 +1,4 @@
 import { supabase, signIn, signUp, signOut, fetchGoals, upsertGoal, fetchUserStats, upsertUserStats, fetchPlantCollection, migrateLocalDataToSupabase } from './utils/supabase'
-import { playRewardDing } from './utils/sounds'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import './App.css'
 import { callAI } from './utils/ai'
@@ -493,8 +492,7 @@ function App() {
   const addMineReward = (oreAmt = 1, pointsAmt = 10) => {
     setOre(prev => { const v = prev + oreAmt; localStorage.setItem('mine_ore', String(v)); return v })
     setMinePoints(prev => { const v = prev + pointsAmt; localStorage.setItem('mine_points', String(v)); return v })
-    playRewardDing()
-    setExpFloat({ amount: `+${oreAmt}原石  +${pointsAmt}积分`, key: Date.now() })
+    setExpFloat({ amount: `+${oreAmt}原石 · +${pointsAmt}积分`, key: Date.now() })
     setTimeout(() => setExpFloat(null), 1800)
   }
 
@@ -1461,67 +1459,7 @@ ${lowCheckinText}
               creditedSteps.add(stepId)
               saveCreditedSteps(creditedSteps)
               addCappedStep()
-              addExp(20)
               addMineReward(1, 10)
-              const currentCoach = loadCoachStyle()
-              const coachMsgs = COACH_TOAST_MESSAGES[currentCoach] || COACH_TOAST_MESSAGES.gentle
-              const coachMsg = coachMsgs[Math.floor(Math.random() * coachMsgs.length)]
-              showToast(coachMsg, 'plant')
-
-                  setTimeout(() => {
-                    const collection = loadPlantCollection()
-                    const unlockedIds = collection.map(p => p.id)
-                    const totalCapped = getTotalCappedSteps()
-                    const activity = loadActivity()
-                    const maxStreak = Math.max(...Object.values(
-                      (() => {
-                        const dates = Object.keys(activity).sort()
-                        let max = 0, cur = 0
-                        for (let i = 0; i < dates.length; i++) {
-                          if (i === 0 || daysBetween(dates[i-1], dates[i]) > 1) cur = 1
-                          else cur++
-                          if (cur > max) max = cur
-                        }
-                        return { max }
-                      })()
-                    ), 0)
-
-                    const cappedData = loadCappedSteps()
-                    const maxDaySteps = Object.values(cappedData).length > 0
-                      ? Math.max(...Object.values(cappedData))
-                      : 0
-                    const stats = {
-                      totalSteps: goals.flatMap(g => g.steps || []).filter(s => s.completed).length,
-                      cappedSteps: totalCapped,
-                      maxStreak,
-                      maxDaySteps,
-                      completedGoals: goals.filter(g => g.completed).length,
-                      activeGoals: goals.filter(g => g.type === 'task' && !g.completed).length,
-                      hasRescued: false
-                    }
-
-                    PLANT_ACHIEVEMENTS.forEach(achievement => {
-                      if (!unlockedIds.includes(achievement.id) && achievement.condition(stats)) {
-                        const newCollection = [...collection, {
-                          id: achievement.id,
-                          name: achievement.name,
-                          emoji: achievement.emoji,
-                          unlockedAt: getLocalDateStr()
-                        }]
-                        savePlantCollection(newCollection)
-                        setTimeout(() => {
-                          showToast(`🎊 新植物解锁！\n${achievement.emoji} ${achievement.name} · ${achievement.desc}`, 'unlock')
-                          import('canvas-confetti').then(m => m.default({ particleCount: 80, spread: 60, origin: { y: 0.7 }, zIndex: 9999 }))
-                        }, 800)
-                      }
-                    })
-                  }, 300)
-
-              try {
-                import('canvas-confetti').then((m) => {
-                  m.default({ particleCount: 150, spread: 80, origin: { y: 0.6 }, zIndex: 9999 });
-                });
-              } catch (err) {}
             }
 
             if (!currentUser && !localStorage.getItem('register_prompted')) {
@@ -1543,6 +1481,11 @@ ${lowCheckinText}
         const allCompleted = newSteps.length > 0 && newSteps.every(s => s.completed)
         if (allCompleted && !g.completed) {
           addMineReward(3, 50)
+          try {
+            import('canvas-confetti').then((m) => {
+              m.default({ particleCount: 150, spread: 80, origin: { y: 0.6 }, zIndex: 9999 });
+            });
+          } catch (err) {}
         }
         return {
           ...g,
