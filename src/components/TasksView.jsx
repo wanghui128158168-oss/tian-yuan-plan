@@ -11,7 +11,8 @@ function TasksView({
   quickTimeframe, setQuickTimeframe, quickBackground, setQuickBackground,
   handleQuickAIDecompose, setQuickGoalPending, setPendingDecomposeGoalId,
   quickGoalText, setQuickGoalText, showQuickContext, setShowQuickContext,
-  quickGoalPending, quickStartOffset, setQuickStartOffset, setShowSettingsModal
+  quickGoalPending, quickStartOffset, setQuickStartOffset, setShowSettingsModal,
+  currentUser, setShowAuthModal
 }) {
   const filterType = taskFilter
   const activeTasks = goals.filter(g => g.type === filterType && !g.completed)
@@ -19,23 +20,37 @@ function TasksView({
 
   return (
     <div className="section tasks-section">
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
         <h2 className="page-title">我的目标</h2>
-        <button
-          className="settings-btn"
-          onClick={() => setShowSettingsModal(true)}
-          aria-label="设置"
-          style={{
-            width: 44, height: 44,
-            borderRadius: 12,
-            background: '#F2F2F7',
-            border: 'none',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer'
-          }}
-        >
-          <Settings size={22} strokeWidth={1.5} color="#3A3A3C" />
-        </button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <button
+            onClick={() => setShowAuthModal(true)}
+            style={{
+              background: currentUser ? '#E8F5EC' : '#1B7A3D',
+              color: currentUser ? '#1B7A3D' : 'white',
+              border: 'none', borderRadius: 10,
+              padding: '6px 14px', fontSize: 13,
+              fontWeight: 600, cursor: 'pointer'
+            }}
+          >
+            {currentUser ? '已登录' : '登录'}
+          </button>
+          <button
+            className="settings-btn"
+            onClick={() => setShowSettingsModal(true)}
+            aria-label="设置"
+            style={{
+              width: 36, height: 36,
+              borderRadius: 10,
+              background: '#F2F2F7',
+              border: 'none',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer'
+            }}
+          >
+            <Settings size={18} strokeWidth={1.8} color="#3A3A3C" />
+          </button>
+        </div>
       </div>
 
       <div className="task-filter-bar">

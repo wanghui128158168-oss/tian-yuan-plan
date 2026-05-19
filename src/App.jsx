@@ -1622,19 +1622,6 @@ ${lowCheckinText}
             <span className="app-brand-sub">认真做事</span>
           </div>
         </div>
-        <button
-          onClick={() => setShowAuthModal(true)}
-          style={{
-            background: currentUser ? '#E8F5EC' : '#1B7A3D',
-            color: currentUser ? '#1B7A3D' : 'white',
-            border: 'none', borderRadius: 10,
-            padding: '6px 14px', fontSize: 13,
-            fontWeight: 600, cursor: 'pointer',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          {currentUser ? '已登录' : '登录'}
-        </button>
       </header>
 
       <main className="app-main">
@@ -1704,6 +1691,8 @@ ${lowCheckinText}
             quickStartOffset={quickStartOffset}
             setQuickStartOffset={setQuickStartOffset}
             setShowSettingsModal={setShowSettingsModal}
+            currentUser={currentUser}
+            setShowAuthModal={setShowAuthModal}
           />
         )}
 
