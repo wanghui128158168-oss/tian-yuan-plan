@@ -1,0 +1,196 @@
+.bottom-sheet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  animation: overlayFadeIn 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  border-radius: 16px 16px 0 0;
+  max-height: 60vh;
+  overflow-y: auto;
+  z-index: 1001;
+  animation: slide-up 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.bottom-sheet-handle {
+  width: 60px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 12px auto;
+}
+
+.bottom-sheet-content {
+  padding: 16px 20px 32px;
+}
+
+.bottom-sheet-stat-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.bottom-sheet-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bottom-sheet-stat-label {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.bottom-sheet-stat-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+/* 时间安排 Sheet */
+.time-sheet {
+  padding: 8px 4px 24px;
+}
+
+.time-sheet-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.time-sheet-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.time-sheet-date {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.time-sheet-section {
+  margin-bottom: 16px;
+}
+
+.time-sheet-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+  background: var(--bg-soft);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.time-sheet-row:hover {
+  background: var(--border);
+}
+
+.time-sheet-label {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.time-sheet-value {
+  font-size: 13px;
+  color: var(--text-h);
+}
+
+.time-sheet-value.unscheduled {
+  color: color-mix(in srgb, var(--text) 40%, transparent);
+}
+
+.time-picker {
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--bg-soft);
+  border-radius: 10px;
+}
+
+.time-picker-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.time-picker-row select {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.time-picker-row select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.time-picker-sep {
+  font-size: 16px;
+  color: var(--text-light);
+}
+
+.time-picker-clear {
+  display: block;
+  margin: 12px auto 0;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.time-picker-clear:hover {
+  color: var(--text);
+}
+
+.time-sheet-actions {
+  margin-top: 20px;
+}
+
+.time-sheet-actions .btn-primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom-sheet-overlay,
+  .bottom-sheet {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,53 @@
+.plant-visual {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.plant-visual[role="button"]:hover {
+  transform: scale(1.05);
+}
+
+.plant-visual[role="button"]:active {
+  transform: scale(0.98);
+}
+
+.plant-floating-anim {
+  animation: plant-float 3s ease-in-out infinite;
+}
+
+.plant-thriving-anim {
+  animation: plant-float 3s ease-in-out infinite;
+}
+
+.plant-wilting-anim {
+  animation: plant-float 3s ease-in-out infinite;
+}
+
+.plant-dead-anim {
+  animation: none;
+}
+
+.plant-thriving {
+  filter: drop-shadow(0 0 6px rgba(76, 175, 80, 0.6));
+}
+
+.plant-wilting {
+  transform: rotate(-8deg);
+  filter: saturate(0.4);
+}
+
+.plant-dead {
+  filter: grayscale(1) opacity(0.5);
+}
+
+@keyframes plant-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
