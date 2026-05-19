@@ -1510,6 +1510,20 @@ ${lowCheckinText}
                 });
               } catch (err) {}
             }
+
+            if (!currentUser && !localStorage.getItem('register_prompted')) {
+              setTimeout(() => {
+                localStorage.setItem('register_prompted', 'true')
+                showConfirm({
+                  title: '🎉 第一步完成了！',
+                  subtitle: '注册账号，进度永久保存，换设备不丢失',
+                  confirmText: '注册'
+                }, () => {
+                  setAuthMode('register')
+                  setShowAuthModal(true)
+                })
+              }, 1500)
+            }
           }
           return s.id === stepId ? { ...s, completed: !s.completed } : s
         })
@@ -2667,11 +2681,6 @@ ${lowCheckinText}
           </div>
         )}
       </BottomSheet>
-
-      <footer className="app-footer">
-        <p>数据保存在本地浏览器中，关闭不丢失~</p>
-        <p className="author-text">作者：豆浆</p>
-      </footer>
 
       {showOnboarding && (
         <Onboarding

@@ -1,4 +1,16 @@
 /* ===== 基础变量 ===== */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
 :root {
   --bg: #FFFFFF;
   --card-bg: #FFFFFF;
@@ -90,7 +102,7 @@
 .section {
   padding: 16px 16px 100px;
   background: #F2F2F7;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .section-title {
@@ -679,15 +691,16 @@ html, body, #root {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
+  overscroll-behavior: none;
 }
 
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: var(--bg-soft, #f2f5f0);
+  background: var(--bg-soft, #F2F2F7);
   color: var(--text);
   line-height: 1.6;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* ===== 应用容器 ===== */
@@ -695,8 +708,8 @@ body {
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
-  padding: 0; background: var(--bg-soft, #f2f5f0);
-  min-height: 100vh;
+  padding: 0; background: var(--bg-soft, #F2F2F7);
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -6168,7 +6181,7 @@ button:focus, input:focus, textarea:focus, select:focus {
   flex-direction: column;
   padding: 16px;
   padding-bottom: calc(96px + env(safe-area-inset-bottom));
-  background: var(--bg-soft, #f2f5f0);
+  background: var(--bg-soft, #F2F2F7);
 }
 
 .mini-growth-bar {
